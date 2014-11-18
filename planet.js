@@ -40,7 +40,7 @@ function planet(_sceneObject,radius){
 		});
 		moonMesh = new THREE.Mesh(moonGeo, moonMaterial);
 		moonMesh.castShadow = true;
-		moonMesh.ReceiveShadow = true;
+		moonMesh.receiveShadow = true;
 		this.scene.add(pivot);
 		this.scene.add(moonMesh);
 		this.moon = moonMesh;
@@ -64,8 +64,8 @@ function planet(_sceneObject,radius){
 
 		this.material = material;
 		this.planetMesh = new THREE.Mesh(planetGeo, material);
-		moonMesh.castShadow = true;
-		moonMesh.ReceiveShadow = true;		
+		this.planetMesh.castShadow = true;
+		this.planetMesh.receiveShadow = true;		
 
 		this.scene.add(this.planetMesh);
 

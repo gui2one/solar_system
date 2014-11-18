@@ -42,7 +42,7 @@ sound.volume.connect(mainVolume);
 // Make the sound source loop.
 sound.source.loop = true;
 
-var soundFileName = "sound/morse_code.mp3";
+var soundFileName = "sound/Meghan Trainor-All_About_That Bass.mp3";
 // Load a sound file using an ArrayBuffer XMLHttpRequest.
 var request = new XMLHttpRequest();
 request.open("GET", soundFileName, true);
@@ -97,9 +97,9 @@ spotLight.castShadow = true;
 spotLight.onlyShadow = true;
 spotLight.shadowBias = -0.0001
 
-spotLight.shadowMapWidth = 1024;
-spotLight.shadowMapHeight = 1024;
-spotLight.shadowDarkness = 1.0;
+spotLight.shadowMapWidth = 2048;
+spotLight.shadowMapHeight = 2048;
+spotLight.shadowDarkness = 0.9;
 
 // light.shadowMapDebug = true;
 
@@ -126,11 +126,11 @@ scene.add(sunLight);
 
 var myPlanet = new planet(scene,2);
 
-myPlanet.moon.castShadow = true;
-myPlanet.moon.receiveShadow = true;
+// myPlanet.moon.castShadow = true;
+// myPlanet.moon.receiveShadow = true;
 
-myPlanet.planetMesh.castShadow = true;
-myPlanet.planetMesh.receiveShadow = true;
+// myPlanet.planetMesh.castShadow = true;
+// myPlanet.planetMesh.receiveShadow = true;
 
 console.log(myPlanet.moon);
 
