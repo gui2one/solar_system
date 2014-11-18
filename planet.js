@@ -78,7 +78,7 @@ function planet(_sceneObject,radius){
 
 	this.update = function(){
 		var delta = clock.getDelta();
-		var orbitSpeed = clock.getElapsedTime() * 40;
+		var orbitSpeed = clock.getElapsedTime() * 80;
 		var orbitRadius = 4.3;
 		this.planetMesh.rotation.y += delta* 0.2;
 		this.moon.position.set(

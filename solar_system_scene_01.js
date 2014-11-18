@@ -1,6 +1,8 @@
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100 );
 
+var controls = new THREE.FirstPersonControls(camera);
+
 // var controls = new THREE.FirstPersonControls(camera);
 var sceneClock = new THREE.Clock({autoStrart: true});
 
@@ -146,7 +148,12 @@ camera.position.z = 5;
 
 var render = function(){
 
+
+
+
 		var dt = sceneClock.getDelta();
+		controls.update(dt);
+		camera.lookAt(new THREE.Vector3( 0, 0, 0 ));
 		var mult = 1;
 		var p = new THREE.Vector3();
 
