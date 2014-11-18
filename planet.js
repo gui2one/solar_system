@@ -7,7 +7,12 @@ function planet(_sceneObject,radius){
 	var moonMesh;
 	this.radius = radius;
 	this.scene = _sceneObject;
-	this.texture = new THREE.ImageUtils.loadTexture("js/solar_system/maps/earth.jpg");
+	this.texture = new THREE.ImageUtils.loadTexture("maps/earth.jpg");
+
+	console.log(this.texture.anisotropy + "!!!!!");
+
+	// this.texture.anisotropy = 4;
+	console.log(this.texture.anisotropy + "!!!!!");
 	this.material;
 	this.moon;
 
@@ -27,11 +32,11 @@ function planet(_sceneObject,radius){
 
 		var moonGeo = new THREE.SphereGeometry(this.radius * 0.2,20,20);
 		var moonMaterial= new THREE.MeshPhongMaterial({
-			map : new THREE.ImageUtils.loadTexture("js/solar_system/maps/moon.jpg"),
+			map : new THREE.ImageUtils.loadTexture("maps/moon.jpg"),
 			specular : 0x010101,
-			specularMap: new THREE.ImageUtils.loadTexture("js/solar_system/maps/moon.jpg"),
+			specularMap: new THREE.ImageUtils.loadTexture("maps/moon.jpg"),
 			bumpScale : 0.01,
-			bumpMap: new THREE.ImageUtils.loadTexture("js/solar_system/maps/moon.jpg")
+			bumpMap: new THREE.ImageUtils.loadTexture("maps/moon.jpg")
 		});
 		moonMesh = new THREE.Mesh(moonGeo, moonMaterial);
 		moonMesh.castShadow = true;
@@ -44,13 +49,14 @@ function planet(_sceneObject,radius){
 		pivot.add(moonMesh);
 		 // pivot.rotation.x = myDegToRad(-60);
 
+
 		var planetGeo = new THREE.SphereGeometry(this.radius,30,30);
 		var material = new THREE.MeshPhongMaterial({
 			map : this.texture,
 			specular : 0x111111,
-			specularMap: new THREE.ImageUtils.loadTexture("js/solar_system/maps/earth_specular.jpg"),
+			specularMap: new THREE.ImageUtils.loadTexture("maps/earth_specular.jpg"),
 			bumpScale : 0.01,
-			bumpMap: new THREE.ImageUtils.loadTexture("js/solar_system/maps/earth_bump.jpg")
+			bumpMap: new THREE.ImageUtils.loadTexture("maps/earth_bump.jpg")
 		});
 		
 

@@ -1,5 +1,5 @@
 var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100 );
 
 // var controls = new THREE.FirstPersonControls(camera);
 var sceneClock = new THREE.Clock({autoStrart: true});
@@ -40,7 +40,7 @@ sound.volume.connect(mainVolume);
 // Make the sound source loop.
 sound.source.loop = true;
 
-var soundFileName = "js/solar_system/sound/morse_code.mp3";
+var soundFileName = "sound/morse_code.mp3";
 // Load a sound file using an ArrayBuffer XMLHttpRequest.
 var request = new XMLHttpRequest();
 request.open("GET", soundFileName, true);
@@ -97,6 +97,7 @@ spotLight.shadowBias = -0.0001
 
 spotLight.shadowMapWidth = 1024;
 spotLight.shadowMapHeight = 1024;
+spotLight.shadowDarkness = 1.0;
 
 // light.shadowMapDebug = true;
 
@@ -106,7 +107,7 @@ spotLight.shadowCameraFov =60;
 // light.shadowCameraVisible = true;
 scene.add(spotLight);
 
-var sunLight = new THREE.PointLight(0xffffff,1.5);
+var sunLight = new THREE.PointLight(0xffffff,1.8);
 sunLight.position.set(20,5,20);
 
 scene.add(sunLight);
@@ -140,6 +141,9 @@ renderer.shadowMapType = THREE.PCFSoftShadowMap;
 
 
 camera.position.z = 5;
+
+
+
 var render = function(){
 
 		var dt = sceneClock.getDelta();
