@@ -87,7 +87,7 @@ sound.panner.connect(mainVolume);
 
 
 // var light= new THREE.DirectionalLight(0xffffff);
-var spotLight= new THREE.SpotLight(0xffffff,2,100,myDegToRad(90),1);
+var spotLight= new THREE.SpotLight(0xffffff,2,100,myDegToRad(30),1);
 
 
 
@@ -107,34 +107,17 @@ spotLight.shadowDarkness = 0.9;
 spotLight.shadowCameraNear = 1;
 spotLight.shadowCameraFar = 500;
 spotLight.shadowCameraFov =120;
-// spotLight.shadowCameraVisible = true;
+spotLight.shadowCameraVisible = true;
 
 
 scene.add(spotLight);
 
-
-var spotLight2= new THREE.SpotLight(0xffffff,2,100,myDegToRad(90),1);
-
-spotLight2.castShadow = true;
-spotLight2.onlyShadow = true;
-spotLight2.shadowBias = -0.0001
-
-spotLight2.shadowMapWidth = 2048;
-spotLight2.shadowMapHeight = 2048;
-spotLight2.shadowDarkness = 0.9;
-
-// light.shadowMapDebug = true;
-
-spotLight2.shadowCameraNear = 1;
-spotLight2.shadowCameraFar = 500;
-spotLight2.shadowCameraFov =120;
-spotLight2.shadowCameraVisible = true;
+var spotLightHelper = new THREE.SpotLightHelper(spotLight,2);
+scene.add(spotLightHelper);
 
 
-scene.add(spotLight2);
 
-spotLight2.position.set(0,0,0);
-spotLight2.target.position = new THREE.Vector3(-50,0,0);
+
 
 
 
@@ -215,7 +198,7 @@ var render = function(){
 
 
 		
-		spotLight.castShadow = true;
+		
 		var dt = sceneClock.getDelta();
 
 		controls.update(dt);
@@ -233,17 +216,19 @@ var render = function(){
 
 		// /////
 
-		spotLight.target.position = myPlanet.planet.position.copy;
+		spotLight.lookAt(myPlanet.planet.position);
 
-		// if(once != 0){
-		// 	spotLight.shadowCamera.lookAt(myPlanet.planet.position);
-		// 	spotLight.shadowCamera.matrixAutoUpdate = true;
-		// 	spotLight.shadowCamera.updateMatrix();
-		// 	spotLight.shadowMatrix.lookAt(new THREE.Vector3(0,0,0),myPlanet.planet.position,new THREE.Vector3(0,1,0));
+		if(once != 0){
+			 // spotLight.shadowCamera.rotation.y += myDegToRad(90);
+			 // spotLight.shadowCamera.matrixAutoUpdate = true;
+			 // spotLight.shadowCamera.updateMatrix();
+			 spotLight.shadowCamera.applyMatrix( spotLight.matrixWorld);
+			console.log(spotLight.shadowMatrix);
+			//spotLight.shadowMatrix.getInverse(spotLight.matrixWorld);
 
-		// }
+		}
 
-		// once++;
+		once++;
 
 
 
