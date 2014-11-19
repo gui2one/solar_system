@@ -92,6 +92,7 @@ var spotLight= new THREE.SpotLight(0xffffff,2,100,myDegToRad(30),1);
 
 
 spotLight.position.set(0,0,0);
+spotLight.target.position.set(10,0,10);
 
 
 spotLight.castShadow = true;
@@ -106,14 +107,14 @@ spotLight.shadowDarkness = 0.9;
 
 spotLight.shadowCameraNear = 1;
 spotLight.shadowCameraFar = 500;
-spotLight.shadowCameraFov =120;
-spotLight.shadowCameraVisible = true;
+spotLight.shadowCameraFov =60;
+// spotLight.shadowCameraVisible = true;
 
 
 scene.add(spotLight);
+scene.add(spotLight.target);
 
-var spotLightHelper = new THREE.SpotLightHelper(spotLight,2);
-scene.add(spotLightHelper);
+
 
 
 
@@ -144,7 +145,7 @@ var myPlanet = new planet(scene,2);
 // myPlanet.planetMesh.castShadow = true;
 // myPlanet.planetMesh.receiveShadow = true;
 
-console.log(myPlanet.moon);
+
 
 
 var renderer = new THREE.WebGLRenderer();
@@ -193,12 +194,12 @@ camera.position.z = 5;
 
 
 var once = 0;
-var render = function(){
+function animate(t){
 
 
 
 		
-		
+		spotLight.target.position.set(myPlanet.planet.position.x , myPlanet.planet.position.y , myPlanet.planet.position.z);
 		var dt = sceneClock.getDelta();
 
 		controls.update(dt);
@@ -216,19 +217,11 @@ var render = function(){
 
 		// /////
 
-		spotLight.lookAt(myPlanet.planet.position);
 
-		if(once != 0){
-			 // spotLight.shadowCamera.rotation.y += myDegToRad(90);
-			 // spotLight.shadowCamera.matrixAutoUpdate = true;
-			 // spotLight.shadowCamera.updateMatrix();
-			 spotLight.shadowCamera.applyMatrix( spotLight.matrixWorld);
-			console.log(spotLight.shadowMatrix);
-			//spotLight.shadowMatrix.getInverse(spotLight.matrixWorld);
+		 
 
-		}
 
-		once++;
+
 
 
 
@@ -266,12 +259,16 @@ var render = function(){
 		sound.panner.setPosition(q.x * mult, q.y* mult, q.z* mult);
 		sound.panner.setVelocity(dx/dt, dy/dt, dz/dt);		
 		
-		requestAnimationFrame(render);
-		renderer.setClearColor( 0x000000 );
-		renderer.render(scene,camera);
+
+		//renderer.setClearColor( 0x000000 );
+
+    renderer.render(scene, camera);
+    window.requestAnimationFrame(animate, renderer.domElement);		
 }
 
-render();
+animate(new Date().getTime());
+
+
 
 window.addEventListener( 'resize', onWindowResize, false );
 
