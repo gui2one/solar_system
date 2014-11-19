@@ -42,8 +42,8 @@ sound.volume.connect(mainVolume);
 // Make the sound source loop.
 sound.source.loop = true;
 
-var soundFileName = "sound/Meghan Trainor-All_About_That Bass.mp3";
-// var soundFileName = "sound/morse_code.mp3";
+// var soundFileName = "sound/Meghan Trainor-All_About_That Bass.mp3";
+var soundFileName = "sound/morse_code.mp3";
 // Load a sound file using an ArrayBuffer XMLHttpRequest.
 var request = new XMLHttpRequest();
 request.open("GET", soundFileName, true);
@@ -91,8 +91,8 @@ var spotLight= new THREE.SpotLight(0xffffff,2,100,myDegToRad(90),1);
 
 
 
-spotLight.position.set(20,5,20);
-// spotLight.lookAt(new THREE.Vector3( 0, 0, 0 ));
+spotLight.position.set(0,0,0);
+
 
 spotLight.castShadow = true;
 spotLight.onlyShadow = true;
@@ -106,12 +106,40 @@ spotLight.shadowDarkness = 0.9;
 
 spotLight.shadowCameraNear = 1;
 spotLight.shadowCameraFar = 500;
-spotLight.shadowCameraFov =60;
-// light.shadowCameraVisible = true;
+spotLight.shadowCameraFov =120;
+// spotLight.shadowCameraVisible = true;
+
+
 scene.add(spotLight);
 
+
+var spotLight2= new THREE.SpotLight(0xffffff,2,100,myDegToRad(90),1);
+
+spotLight2.castShadow = true;
+spotLight2.onlyShadow = true;
+spotLight2.shadowBias = -0.0001
+
+spotLight2.shadowMapWidth = 2048;
+spotLight2.shadowMapHeight = 2048;
+spotLight2.shadowDarkness = 0.9;
+
+// light.shadowMapDebug = true;
+
+spotLight2.shadowCameraNear = 1;
+spotLight2.shadowCameraFar = 500;
+spotLight2.shadowCameraFov =120;
+spotLight2.shadowCameraVisible = true;
+
+
+scene.add(spotLight2);
+
+spotLight2.position.set(0,0,0);
+spotLight2.target.position = new THREE.Vector3(-50,0,0);
+
+
+
 var sunLight = new THREE.PointLight(0xffffff,1.8);
-sunLight.position.set(20,5,20);
+sunLight.position.set(0,0,0);
 
 scene.add(sunLight);
 
@@ -142,20 +170,58 @@ document.body.appendChild(renderer.domElement);
 renderer.shadowMapEnabled = true;
 renderer.shadowMapType = THREE.PCFSoftShadowMap;
 
+// renderer.shadowMapCullFace = THREE.CullFaceFront;
+// spotLight.shadowCascadeCount = 3;
+// renderer.shadowMapCascade = true;
+
 
 camera.position.z = 5;
 
 
+ //// night shader test --- interessant mais ca marche pas encore... 
+// 	uniforms = {
 
+// 		sunPosition: {type: "v3", value: new THREE.Vector3(20,5,20)},
+// 		earthPosition: {type: "v3", value: new THREE.Vector3(0,0,0)},
+// 		texture1: { type: "t", value: THREE.ImageUtils.loadTexture( "maps/earth_night.jpg" ) }
+
+
+// 	};
+
+// 	uniforms.texture1.value.wrapS = uniforms.texture1.value.wrapT = THREE.RepeatWrapping;
+
+// myPlanet.planetMesh.material = 	new THREE.ShaderMaterial( {
+
+// 					uniforms: uniforms,
+// 					transparent : true,
+// 					blending : THREE.NormalBlending,
+// 					vertexShader: document.getElementById( 'vertexShader' ).textContent,
+// 					fragmentShader: document.getElementById( 'fragmentShader' ).textContent
+
+// 				} );
+// console.log(myPlanet.planetMesh.material.uniforms);
+
+//  myPlanet.planetMesh.material.uniforms.sunPosition.needsUpdate = true;
+////////////////////
+/////////// end NIGHT SHADER TEST
+//////////////////
+
+
+
+
+var once = 0;
 var render = function(){
 
 
 
-
+		
+		spotLight.castShadow = true;
 		var dt = sceneClock.getDelta();
+
 		controls.update(dt);
 		camera.lookAt(new THREE.Vector3( 0, 0, 0 ));
 		var mult = 1;
+
 		var p = new THREE.Vector3();
 
 		p.setFromMatrixPosition(myPlanet.moon.matrixWorld);
@@ -166,6 +232,19 @@ var render = function(){
 		myPlanet.update();
 
 		// /////
+
+		spotLight.target.position = myPlanet.planet.position.copy;
+
+		// if(once != 0){
+		// 	spotLight.shadowCamera.lookAt(myPlanet.planet.position);
+		// 	spotLight.shadowCamera.matrixAutoUpdate = true;
+		// 	spotLight.shadowCamera.updateMatrix();
+		// 	spotLight.shadowMatrix.lookAt(new THREE.Vector3(0,0,0),myPlanet.planet.position,new THREE.Vector3(0,1,0));
+
+		// }
+
+		// once++;
+
 
 
 		var volumeVal = (1-Math.sqrt(Math.clamp(camera.position.distanceTo(myPlanet.moon.position)/9,0,1)))*1.0;
@@ -209,9 +288,16 @@ var render = function(){
 
 render();
 
+window.addEventListener( 'resize', onWindowResize, false );
 
+function onWindowResize() {
 
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
 
+	renderer.setSize( window.innerWidth, window.innerHeight );
+
+}
 
 
 

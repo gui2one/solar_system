@@ -1,9 +1,11 @@
 function planet(_sceneObject,radius){
 	
 
-	var pivot = new THREE.Object3D();
+	// this.orbitRadius = _orbitRadius;
+	var planetPivot = new THREE.Object3D();
+	var moonPivot = new THREE.Object3D();
 	var clock = new THREE.Clock({autostart:true});
-	this.planetMesh;
+	this.planet;
 	var moonMesh;
 	this.radius = radius;
 	this.scene = _sceneObject;
@@ -11,7 +13,7 @@ function planet(_sceneObject,radius){
 
 	console.log(this.texture.anisotropy + "!!!!!");
 
-	// this.texture.anisotropy = 4;
+	 this.texture.anisotropy = 4;
 	console.log(this.texture.anisotropy + "!!!!!");
 	this.material;
 	this.moon;
@@ -41,13 +43,13 @@ function planet(_sceneObject,radius){
 		moonMesh = new THREE.Mesh(moonGeo, moonMaterial);
 		moonMesh.castShadow = true;
 		moonMesh.receiveShadow = true;
-		this.scene.add(pivot);
+		this.scene.add(moonPivot);
 		this.scene.add(moonMesh);
 		this.moon = moonMesh;
 		moonMesh.position.x = -4;
 
-		pivot.add(moonMesh);
-		 // pivot.rotation.x = myDegToRad(-60);
+		moonPivot.add(moonMesh);
+		 // moonPivot.rotation.x = myDegToRad(-60);
 
 
 		var planetGeo = new THREE.SphereGeometry(this.radius,30,30);
@@ -63,12 +65,19 @@ function planet(_sceneObject,radius){
 		
 
 		this.material = material;
-		this.planetMesh = new THREE.Mesh(planetGeo, material);
-		this.planetMesh.castShadow = true;
-		this.planetMesh.receiveShadow = true;		
+		this.planet = new THREE.Mesh(planetGeo, material);
+		this.planet.castShadow = true;
+		this.planet.receiveShadow = true;		
 
-		this.scene.add(this.planetMesh);
+		this.scene.add(this.planet);
+		// this.planet.add(moonPivot);
+		// this.scene.add(planetPivot);
+		// planetPivot.add(this.planet);
+		
 
+		 
+
+		 this.planet.matrixAutoUpdate = true;
 		
 
 	}
@@ -77,19 +86,36 @@ function planet(_sceneObject,radius){
 
 
 	this.update = function(){
+
+
+
+
+
 		var delta = clock.getDelta();
-		var orbitSpeed = clock.getElapsedTime() * 80;
-		var orbitRadius = 4.3;
-		this.planetMesh.rotation.y += delta* 0.2;
-		this.moon.position.set(
-			Math.sin(myDegToRad(orbitSpeed))* orbitRadius,
+		var orbitSpeed = clock.getElapsedTime() * 10;
+		var orbitRadius = 10;
+	
+		this.planet.rotation.y += delta* 0.2;
+
+		this.planet.position.set(
+			(Math.sin(myDegToRad(orbitSpeed))* orbitRadius),
 			0,
-			Math.cos(myDegToRad(orbitSpeed))* orbitRadius
+			(Math.cos(myDegToRad(orbitSpeed))* orbitRadius)
+			);		
+
+		var moonOrbitRadius = 4.5;
+		var moonOrbitSpeed = clock.getElapsedTime() * 80;
+		this.moon.position.set(
+			(Math.sin(myDegToRad(moonOrbitSpeed))* moonOrbitRadius) + this.planet.position.x,
+			0 + this.planet.position.y,
+			(Math.cos(myDegToRad(moonOrbitSpeed))* moonOrbitRadius) + this.planet.position.z
 			);
 
-		this.moon.lookAt(this.planetMesh.position);
+		this.moon.position += this.planet.position;
 
-		//pivot.rotation.x += 0.001;
+		this.moon.lookAt(this.planet.position);
+
+		//moonPivot.rotation.x += 0.001;
 
 
 
