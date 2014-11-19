@@ -46,3 +46,35 @@ function traceRay(origin, direction){
 	ray.set(origin, direction);	
 	return ray;
 }
+
+
+
+//// PSEUDO RANDOM NUMBER GENERATION
+function nextRandomNumber(){
+  var hi = this.seed / this.Q;
+  var lo = this.seed % this.Q;
+  var test = this.A * lo - this.R * hi;
+  if(test > 0){
+    this.seed = test;
+  } else {
+    this.seed = test + this.M;
+  }
+  return (this.seed * this.oneOverM);
+}
+
+function RandomNumberGenerator(seed){
+  var d = new Date();
+  this.seed = seed;//2345678901 + (d.getSeconds() * 0xFFFFFF) + (d.getMinutes() * 0xFFFF);
+  this.A = 48271;
+  this.M = 2147483647;
+  this.Q = this.M / this.A;
+  this.R = this.M % this.A;
+  this.oneOverM = this.M;
+  this.next = nextRandomNumber;
+  return this;
+}
+
+function createRandomNumber(seed){
+  var rand = new RandomNumberGenerator(seed);
+  return rand.next();
+}

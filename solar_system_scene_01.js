@@ -1,3 +1,14 @@
+ var rng = new RNG('Example');
+
+for(var i =0 ; i< 10; i++){
+	console.log( rng.random(1, 1000));
+}
+
+
+
+
+
+
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100 );
 
@@ -138,6 +149,7 @@ scene.add(sunLight);
 
 
 var myPlanet = new planet(scene,2);
+myPlanet.doMoon(1);
 
 // myPlanet.moon.castShadow = true;
 // myPlanet.moon.receiveShadow = true;
@@ -158,8 +170,8 @@ renderer.shadowMapType = THREE.PCFSoftShadowMap;
 // spotLight.shadowCascadeCount = 3;
 // renderer.shadowMapCascade = true;
 
-
-camera.position.z = 5;
+camera.position.y = 20;
+camera.position.z = 20;
 
 
  //// night shader test --- interessant mais ca marche pas encore... 
@@ -208,7 +220,7 @@ function animate(t){
 
 		var p = new THREE.Vector3();
 
-		p.setFromMatrixPosition(myPlanet.moon.matrixWorld);
+		p.setFromMatrixPosition(myPlanet.moons[0].matrixWorld);
 		var px = p.x, py = p.y, pz = p.z;
 
 		// /////
@@ -225,16 +237,16 @@ function animate(t){
 
 
 
-		var volumeVal = (1-Math.sqrt(Math.clamp(camera.position.distanceTo(myPlanet.moon.position)/9,0,1)))*1.0;
+		var volumeVal = (1-Math.sqrt(Math.clamp(camera.position.distanceTo(myPlanet.moons[0].position)/9,0,1)))*0.2;
 		mainVolume.gain.value = volumeVal;
 		// console.log(volumeVal);
 
 
 
-		 myPlanet.moon.updateMatrixWorld();
+		 myPlanet.moons[0].updateMatrixWorld();
 		 // console.log(myPlanet.moon.position.x);
 		var p = new THREE.Vector3();
-		p.setFromMatrixPosition(myPlanet.moon.matrixWorld);
+		p.setFromMatrixPosition(myPlanet.moons[0].matrixWorld);
 
 		// And copy the position over to the sound of the object.
 		sound.panner.setPosition(p.x * mult, p.y * mult, p.z * mult);
@@ -250,10 +262,10 @@ function animate(t){
 
 
 
-		myPlanet.moon.updateMatrixWorld();
+		myPlanet.moons[0].updateMatrixWorld();
 
 		var q = new THREE.Vector3();
-		q.setFromMatrixPosition(myPlanet.moon.matrixWorld);
+		q.setFromMatrixPosition(myPlanet.moons[0].matrixWorld);
 		var dx = q.x-px, dy = q.y-py, dz = q.z-pz;
 
 		sound.panner.setPosition(q.x * mult, q.y* mult, q.z* mult);
