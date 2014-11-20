@@ -10,7 +10,7 @@ for(var i =0 ; i< 10; i++){
 
 
 var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
 var controls = new THREE.FirstPersonControls(camera);
 controls.movementSpeed = 50.0;
@@ -156,6 +156,18 @@ saturn.setTexture(new THREE.ImageUtils.loadTexture("maps/saturn.jpg"));
 saturn.setOrbitSpeed(49.2 * speedMult);
 saturn.doRing();
 planetsArray[5] = saturn;
+
+var neptune = new planet(scene,2,100);
+neptune.setTexture(new THREE.ImageUtils.loadTexture("maps/neptune.jpg"));
+// saturn.setOrbitRadius(80);
+neptune.setOrbitSpeed(22.2 * speedMult);
+planetsArray[6] = neptune;
+
+var uranus = new planet(scene,1.5,130);
+uranus.setTexture(new THREE.ImageUtils.loadTexture("maps/uranus.jpg"));
+// saturn.setOrbitRadius(80);
+uranus.setOrbitSpeed(21.2 * speedMult);
+planetsArray[7] = uranus;
 
 
 
