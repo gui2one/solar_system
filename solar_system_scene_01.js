@@ -1,8 +1,5 @@
- var rng = new RNG('Example');
 
-for(var i =0 ; i< 10; i++){
-	console.log( rng.random(1, 1000));
-}
+
 
 
 
@@ -12,12 +9,37 @@ for(var i =0 ; i< 10; i++){
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
-var controls = new THREE.FirstPersonControls(camera);
-controls.movementSpeed = 50.0;
+
+var renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+renderer.shadowMapEnabled = true;
+
+renderer.shadowMapType = THREE.PCFSoftShadowMap;
+
+var controls = new THREE.FirstPersonControls(camera, renderer.domElement);
+controls.movementSpeed = 10.0;
 
 // var controls = new THREE.FirstPersonControls(camera);
 var sceneClock = new THREE.Clock({autoStrart: true});
 
+var gui = new dat.GUI({
+
+	width : 300
+});
+
+var uiConfig = {
+
+	param1:true
+
+};
+
+gui.add( uiConfig, 'param1').onChange( function() {
+
+		console.log("changed param1");
+});
+
+gui.open();
 
 // /// SOUND test
 
@@ -207,12 +229,6 @@ for(var i=0; i < planetsArray.length; i++){
 
 
 
-var renderer = new THREE.WebGLRenderer({antialias:true});
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
-renderer.shadowMapEnabled = true;
-
-renderer.shadowMapType = THREE.PCFSoftShadowMap;
 
 // renderer.shadowMapCullFace = THREE.CullFaceFront;
 // earthSpotLight.shadowCascadeCount = 3;
@@ -264,7 +280,7 @@ function animate(t){
 		var dt = sceneClock.getDelta();
 
 		controls.update(dt);
-		camera.lookAt(new THREE.Vector3( 0, 0, 0 ));
+		//camera.lookAt(new THREE.Vector3( 0, 0, 0 ));
 		var mult = 1;
 
 		var p = new THREE.Vector3();

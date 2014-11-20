@@ -96,10 +96,38 @@ function planet(_sceneObject,radius, _orbitRadius){
 
 	this.drawOrbit = function()
 	{
-		var orbitMaterial = new THREE.MeshBasicMaterial( { wireframe : false,color: 0xffff00, side: THREE.DoubleSide, map: new THREE.ImageUtils.loadTexture('maps/sun.jpg')} );
-		this.orbitObject = new THREE.Mesh(new THREE.RingGeometry(this.orbitRadius-0.1,this.orbitRadius+0.1,128,3),orbitMaterial);
-		this.orbitObject.rotation.x = myDegToRad(-90);
-		this.scene.add(this.orbitObject);
+
+	var points = [];
+	var nPoints = 50;
+	for (var i = 0; i < nPoints; i++) {
+		  points[i] = new THREE.Vector3(
+		  		Math.sin(myDegToRad(360/nPoints)*i) * this.orbitRadius,
+		  		 0,
+		  		Math.cos(myDegToRad(360/nPoints)*i) * this.orbitRadius
+		  );
+		// points[i] = new THREE.Vector3(nPoints,i*100,i*5);
+	}
+	//Create a closed loop
+	var curve = new THREE.ClosedSplineCurve3();
+
+	for (var i = 0; i < points.length; i++) {
+		curve.points.push(points[i]);
+	};
+
+	
+
+	var geometry = new THREE.Geometry();
+	geometry.vertices = curve.getPoints(120);
+
+	var material = new THREE.LineBasicMaterial( { color: 0xaaddff, linewidth: 3} );
+
+	    var mesh = new THREE.Line(geometry,material);
+    
+    this.scene.add(mesh);		
+		// var orbitMaterial = new THREE.MeshBasicMaterial( { wireframe : false,color: 0xffff00, side: THREE.DoubleSide, map: new THREE.ImageUtils.loadTexture('maps/sun.jpg')} );
+		// this.orbitObject = new THREE.Mesh(new THREE.RingGeometry(this.orbitRadius-0.1,this.orbitRadius+0.1,128,3),orbitMaterial);
+		// this.orbitObject.rotation.x = myDegToRad(-90);
+		// this.scene.add(this.orbitObject);
 
 	}
 	this.initGeometry = function(){
