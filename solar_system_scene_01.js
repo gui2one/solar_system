@@ -7,7 +7,7 @@
 
 
 var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000 );
+var camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
 
 var renderer = new THREE.WebGLRenderer({antialias:true});
@@ -122,7 +122,7 @@ sound.panner.connect(mainVolume);
 
 
 
-var sunLight = new THREE.PointLight(0xffffff,1.8);
+var sunLight = new THREE.PointLight(0xffffff,1.5);
 sunLight.position.set(0,0,0);
 
 scene.add(sunLight);
@@ -135,7 +135,7 @@ var sun = new THREE.Mesh(sunGeo, sunMaterial);
 scene.add(sun);
 
 
-var speedMult = 0.1;
+var speedMult = 0.3;
 var planetsArray = [];
 
 
@@ -196,37 +196,81 @@ planetsArray[7] = uranus;
 
 //// planets spot lights for shadow mapping
 
-var spotLightsArray = [];
-for(var i=0; i < planetsArray.length; i++){
+// var spotLightsArray = [];
+// for(var i=0; i < planetsArray.length; i++){
 
-	spotLightsArray[i] = new THREE.SpotLight(0xffffff,10,100,myDegToRad(30),1);
-	//var mercurySpotLight= new THREE.SpotLight(0xffffff,2,100,myDegToRad(30),1);
-	spotLightsArray[i].position.set(0,0,0);
-	spotLightsArray[i].castShadow = true;
-	spotLightsArray[i].onlyShadow = true;   //// <------------ only shadows
-	spotLightsArray[i].shadowBias = -0.0001
-	spotLightsArray[i].shadowMapWidth = 1024;
-	spotLightsArray[i].shadowMapHeight = 1024;
-	spotLightsArray[i].shadowDarkness = 0.9;
-	spotLightsArray[i].shadowCameraNear = 1;
-	spotLightsArray[i].shadowCameraFar = 500;
-	spotLightsArray[i].shadowCameraFov =30;
-	// spotLightsArray[i].shadowCameraVisible = true;
-	scene.add(spotLightsArray[i]);
-	scene.add(spotLightsArray[i].target);
-}
-
-
+// 	spotLightsArray[i] = new THREE.SpotLight(0xffffff,0,100,myDegToRad(30),1);
+// 	//var mercurySpotLight= new THREE.SpotLight(0xffffff,2,100,myDegToRad(30),1);
+// 	// spotLightsArray[i].position.set(0,0,0);
+// 	// spotLightsArray[i].castShadow = true;
+// 	// spotLightsArray[i].onlyShadow = true;   //// <------------ only shadows
+// 	// spotLightsArray[i].shadowBias = -0.0005
+// 	// spotLightsArray[i].shadowMapWidth = 1024;
+// 	// spotLightsArray[i].shadowMapHeight = 1024;
+// 	// spotLightsArray[i].shadowDarkness = 0.5;
+// 	// spotLightsArray[i].shadowCameraNear = 1;
+// 	// spotLightsArray[i].shadowCameraFar = 500;
+// 	// spotLightsArray[i].shadowCameraFov =30;
+// 	// spotLightsArray[i].shadowCameraVisible = true;
+// 	scene.add(spotLightsArray[i]);
+// 	scene.add(spotLightsArray[i].target);
+// }
 
 
+var ambientLight = new THREE.AmbientLight( 0x111111 );
+scene.add(ambientLight);
 
 ///////////////////
 /////////// END planets spotlights
 /////////////////////////:
 
+///////////////
+//// fixed spots TEST
+///////////////
+
+
+	var fSpot = [];
+
+	for (var i = 0; i < 6; i++) {
+	 	fSpot[i] = new THREE.SpotLight(0xffffff,1,1000,myDegToRad(60),0.0);
+		fSpot[i].position.set(0,0,0);
+		fSpot[i].castShadow = true;
+		fSpot[i].onlyShadow = true;   //// <------------ only shadows
+		fSpot[i].shadowBias = -0.0005
+		fSpot[i].shadowMapWidth = 2048;
+		fSpot[i].shadowMapHeight = 2048;
+		fSpot[i].shadowDarkness = 0.8;
+		fSpot[i].shadowCameraNear = 1;
+		fSpot[i].shadowCameraFar = 500;
+		fSpot[i].shadowCameraFov =60;
+		// fSpot[i].shadowCameraVisible = true;
+
+
+	/*	var helper = new THREE.SpotLightHelper(fSpot,2);
+		scene.add(helper);	*/
+		//fSpot.target = tar;
+		scene.add(fSpot[i]);
+		scene.add(fSpot[i].target);	 	
+
+		fSpot[i].position.set(0,0,0);
+		fSpot[i].target.position.set(
+			Math.sin(myDegToRad((360/6)*i)),
+			0,
+			Math.cos(myDegToRad((360/6)*i))
+			);		
+	 } 
 
 
 
+
+	//tar.position.set(-20,0,0);
+
+
+
+
+///////////////
+//// END fixed spots TEST
+///////////////
 
 
 
@@ -272,10 +316,9 @@ camera.position.z = 20;
 var once = 0;
 function animate(t){
 
-
-		for(var i=0; i<spotLightsArray.length; i++){
-			spotLightsArray[i].target.position.set(planetsArray[i].planet.position.x , planetsArray[i].planet.position.y , planetsArray[i].planet.position.z);
-		}
+		// for(var i=0; i<spotLightsArray.length; i++){
+		// 	spotLightsArray[i].target.position.set(planetsArray[i].planet.position.x , planetsArray[i].planet.position.y , planetsArray[i].planet.position.z);
+		// }
 
 		var dt = sceneClock.getDelta();
 
@@ -306,9 +349,9 @@ function animate(t){
 
 
 
-		var volumeVal = (1-Math.sqrt(Math.clamp(camera.position.distanceTo(earth.moons[0].position)/9,0,1)))*0.2;
+		var volumeVal = (1-Math.sqrt(Math.clamp(camera.position.distanceTo(earth.moons[0].position)/9,0,1)))*1.0;
 		mainVolume.gain.value = volumeVal;
-		// console.log(volumeVal);
+		// console.log(volumeVal);zdzzzz
 
 
 
