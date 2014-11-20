@@ -1,6 +1,6 @@
  
 
-function planet(_sceneObject,radius){
+function planet(_sceneObject,radius, _orbitRadius){
 	
 
 	// this.orbitRadius = _orbitRadius;
@@ -15,15 +15,17 @@ function planet(_sceneObject,radius){
 	this.radius = radius;
 	this.scene = _sceneObject;
 	this.texture = new THREE.ImageUtils.loadTexture("maps/earth.jpg");
-	this.orbitRadius = 5;
+	this.orbitRadius =_orbitRadius;
 	this.orbitSpeed = 10;
+
+	this.orbitObject;
 
 	this.material;
 	this.moon;
 	this.ring;
 	this.bDoRing = false;
 
-	moonsSpeedMullt = 0.01;
+	moonsSpeedMullt = 1.0;
 
 	
 	this.setRadius = function(_radius){
@@ -91,11 +93,20 @@ function planet(_sceneObject,radius){
 		}
 
 	}
+
+	this.drawOrbit = function()
+	{
+		var orbitMaterial = new THREE.MeshBasicMaterial( { wireframe : false,color: 0xffff00, side: THREE.DoubleSide, map: new THREE.ImageUtils.loadTexture('maps/sun.jpg')} );
+		this.orbitObject = new THREE.Mesh(new THREE.RingGeometry(this.orbitRadius-0.1,this.orbitRadius+0.1,128,3),orbitMaterial);
+		this.orbitObject.rotation.x = myDegToRad(-90);
+		this.scene.add(this.orbitObject);
+
+	}
 	this.initGeometry = function(){
 
 
 
-
+		this.drawOrbit();
 		var planetGeo = new THREE.SphereGeometry(this.radius,30,30);
 		var material = new THREE.MeshPhongMaterial({
 			map : this.texture,

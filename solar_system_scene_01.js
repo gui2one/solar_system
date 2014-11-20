@@ -113,46 +113,46 @@ var sun = new THREE.Mesh(sunGeo, sunMaterial);
 scene.add(sun);
 
 
-var speedMult = 0.01;
+var speedMult = 0.1;
 var planetsArray = [];
 
 
-var mercury = new planet(scene,1);
+var mercury = new planet(scene,1,10);
 mercury.setTexture(new THREE.ImageUtils.loadTexture("maps/mercury.jpg"));
-mercury.setOrbitRadius(10);
+// mercury.setOrbitRadius(10);
 mercury.setOrbitSpeed(50.55 * speedMult)
 planetsArray[0] = mercury;
 
-var venus = new planet(scene,0.8);
+var venus = new planet(scene,0.8,15);
 venus.setTexture(new THREE.ImageUtils.loadTexture("maps/venus.jpg"));
-venus.setOrbitRadius(15);
+// venus.setOrbitRadius(15);
 venus.setOrbitSpeed(32.5 * speedMult)
 planetsArray[1] = venus;
 
-var earth = new planet(scene,2);
+var earth = new planet(scene,2,25);
 earth.setTexture(new THREE.ImageUtils.loadTexture("maps/earth.jpg"));
-earth.setOrbitRadius(25);
+// earth.setOrbitRadius(25);
 earth.setOrbitSpeed(45.8 * speedMult)
 earth.doMoon(1);
 planetsArray[2] = earth;
 
-var mars = new planet(scene,1.2);
+var mars = new planet(scene,1.2,40);
 mars.setTexture(new THREE.ImageUtils.loadTexture("maps/mars.jpg"));
-mars.setOrbitRadius(40);
+// mars.setOrbitRadius(40);
 mars.setOrbitSpeed(39.9 * speedMult);
 mars.doMoon(2)
 planetsArray[3] = mars;
 
-var jupiter = new planet(scene,4);
+var jupiter = new planet(scene,4,60);
 jupiter.setTexture(new THREE.ImageUtils.loadTexture("maps/jupiter.jpg"));
-jupiter.setOrbitRadius(60);
+// jupiter.setOrbitRadius(60);
 jupiter.setOrbitSpeed(50.1 * speedMult);
 jupiter.doMoon(2)
 planetsArray[4] = jupiter;
 
-var saturn = new planet(scene,3);
+var saturn = new planet(scene,3,80);
 saturn.setTexture(new THREE.ImageUtils.loadTexture("maps/saturn.jpg"));
-saturn.setOrbitRadius(80);
+// saturn.setOrbitRadius(80);
 saturn.setOrbitSpeed(49.2 * speedMult);
 saturn.doRing();
 planetsArray[5] = saturn;
