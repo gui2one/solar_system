@@ -14,8 +14,30 @@ var renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 renderer.shadowMapEnabled = true;
-
 renderer.shadowMapType = THREE.PCFSoftShadowMap;
+
+
+// postprocessing
+
+var composer = new THREE.EffectComposer( renderer );
+var renderModel = new THREE.RenderPass(scene,camera);
+
+composer.addPass(renderModel);
+
+
+var bloomFactor =0.9 , bloomStrength = 1.5;
+var effectBloom = new THREE.BloomPass( bloomStrength,bloomFactor * 25.0, bloomFactor * 4 ,2048 );
+
+composer.addPass( effectBloom );
+
+var effectCopy = new THREE.ShaderPass( THREE.CopyShader );
+effectCopy.renderToScreen = true;
+composer.addPass( effectCopy );
+
+
+
+
+
 
 var controls = new THREE.FirstPersonControls(camera, renderer.domElement);
 controls.movementSpeed = 10.0;
@@ -383,11 +405,18 @@ function animate(t){
 		sound.panner.setPosition(q.x * mult, q.y* mult, q.z* mult);
 		sound.panner.setVelocity(dx/dt, dy/dt, dz/dt);		
 		
+		window.requestAnimationFrame(animate);	
+		// renderer.setClearColor( 0x000000);
+		renderer.clear();
 
-		renderer.setClearColor( 0x000000);
+	    // renderer.render(scene, camera);
+	    renderer.autoClear = false;
 
-	    renderer.render(scene, camera);
-	    window.requestAnimationFrame(animate, renderer.domElement);		
+
+	    
+	    	
+
+	    composer.render();
 }
 
 animate(new Date().getTime());
