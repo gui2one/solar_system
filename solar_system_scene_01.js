@@ -10,7 +10,7 @@ var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
 
-var renderer = new THREE.WebGLRenderer({antialias:true});
+var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 renderer.shadowMapEnabled = true;
@@ -25,17 +25,33 @@ var renderModel = new THREE.RenderPass(scene,camera);
 composer.addPass(renderModel);
 
 
-var bloomFactor =0.9 , bloomStrength = 1.5;
+var bloomFactor =0.9 , bloomStrength = 0.7;
 var effectBloom = new THREE.BloomPass( bloomStrength,bloomFactor * 25.0, bloomFactor * 4 ,2048 );
 
 composer.addPass( effectBloom );
 
+
+
+
+
 var effectCopy = new THREE.ShaderPass( THREE.CopyShader );
 effectCopy.renderToScreen = true;
 composer.addPass( effectCopy );
+////////////////////
+///// FXAA
+////////////////////
 
+dpr = 1;
+// if (window.devicePixelRatio !== undefined) {
+//   dpr = window.devicePixelRatio;
+//   console.log(dpr);
+// }
 
-
+effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
+effectFXAA.uniforms['resolution'].value.set(1 / (window.innerWidth * dpr), 1 / (window.innerHeight * dpr));
+effectFXAA.renderToScreen = true;
+composer.addPass(renderModel);
+composer.addPass(effectFXAA);
 
 
 
@@ -426,6 +442,9 @@ animate(new Date().getTime());
 window.addEventListener( 'resize', onWindowResize, false );
 
 function onWindowResize() {
+
+  effectFXAA.uniforms['resolution'].value.set(1 / (window.innerWidth * dpr), 1 / (window.innerHeight * dpr));
+  composer.setSize(window.innerWidth * dpr, window.innerHeight * dpr);
 
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();

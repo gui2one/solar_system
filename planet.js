@@ -119,7 +119,7 @@ function planet(_sceneObject,radius, _orbitRadius){
 	var geometry = new THREE.Geometry();
 	geometry.vertices = curve.getPoints(120);
 
-	var material = new THREE.LineBasicMaterial( { color: 0xaaddff, linewidth: 3} );
+	var material = new THREE.LineBasicMaterial( { color: 0xaaddff, linewidth: 1} );
 
 	    var mesh = new THREE.Line(geometry,material);
     
