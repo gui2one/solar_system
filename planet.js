@@ -4,8 +4,7 @@ function planet(_sceneObject,radius, _orbitRadius){
 	
 
 	// this.orbitRadius = _orbitRadius;
-	var planetPivot = new THREE.Object3D();
-	var moonPivot = new THREE.Object3D();
+
 	var clock = new THREE.Clock({autostart:true});
 	this.planet;
 	this.moons = [];
@@ -13,6 +12,7 @@ function planet(_sceneObject,radius, _orbitRadius){
 	var moonsPivots = [];
 	var moonMesh;
 	this.radius = radius;
+	// this.scene = new THREE.Scene();
 	this.scene = _sceneObject;
 	this.texture = new THREE.ImageUtils.loadTexture("maps/earth.jpg");
 	this.orbitRadius =_orbitRadius;
@@ -124,10 +124,10 @@ function planet(_sceneObject,radius, _orbitRadius){
 	    var mesh = new THREE.Line(geometry,material);
     
     this.scene.add(mesh);		
-		// var orbitMaterial = new THREE.MeshBasicMaterial( { wireframe : false,color: 0xffff00, side: THREE.DoubleSide, map: new THREE.ImageUtils.loadTexture('maps/sun.jpg')} );
-		// this.orbitObject = new THREE.Mesh(new THREE.RingGeometry(this.orbitRadius-0.1,this.orbitRadius+0.1,128,3),orbitMaterial);
-		// this.orbitObject.rotation.x = myDegToRad(-90);
-		// this.scene.add(this.orbitObject);
+	// 	var orbitMaterial = new THREE.MeshBasicMaterial( { wireframe : false,color: 0xffff00, side: THREE.DoubleSide, map: new THREE.ImageUtils.loadTexture('maps/sun.jpg')} );
+	// 	this.orbitObject = new THREE.Mesh(new THREE.RingGeometry(this.orbitRadius-0.1,this.orbitRadius+0.1,128,3),orbitMaterial);
+	// 	this.orbitObject.rotation.x = myDegToRad(-90);
+	// 	this.scene.add(this.orbitObject);
 
 	}
 	this.initGeometry = function(){
@@ -153,14 +153,12 @@ function planet(_sceneObject,radius, _orbitRadius){
 		this.planet.receiveShadow = true;		
 
 		this.scene.add(this.planet);
-		// this.planet.add(moonPivot);
-		// this.scene.add(planetPivot);
-		// planetPivot.add(this.planet);
+
 		
 
 		 
 
-		 this.planet.matrixAutoUpdate = true;
+		 // this.planet.matrixAutoUpdate = true;
 		
 
 	}
@@ -171,12 +169,9 @@ function planet(_sceneObject,radius, _orbitRadius){
 	this.update = function(){
 
 
-
-
-
 		var delta = clock.getDelta();
 		var orbitSpeed = clock.getElapsedTime() * this.orbitSpeed;
-		//var orbitRadius = 10;
+
 	
 		this.planet.rotation.y += delta* 0.2;
 

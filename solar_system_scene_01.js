@@ -16,18 +16,37 @@ document.body.appendChild(renderer.domElement);
 renderer.shadowMapEnabled = true;
 renderer.shadowMapType = THREE.PCFSoftShadowMap;
 
-
-// postprocessing
+////////////////////
+////////// postprocessing
+////////////////////
 
 var composer = new THREE.EffectComposer( renderer );
 var renderModel = new THREE.RenderPass(scene,camera);
+
+
+
+////////////////////
+///// FXAA
+////////////////////
+
+dpr = 1;
+if (window.devicePixelRatio !== undefined) {
+  dpr = window.devicePixelRatio;
+  console.log(dpr);
+}
+
+effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
+effectFXAA.uniforms['resolution'].value.set(1 / (window.innerWidth * dpr), 1 / (window.innerHeight * dpr));
+effectFXAA.renderToScreen = true;
+composer.addPass(renderModel);
+composer.addPass(effectFXAA);
 
 composer.addPass(renderModel);
 
 
 var bloomFactor =0.9 , bloomStrength = 0.7;
-var effectBloom = new THREE.BloomPass( bloomStrength,bloomFactor * 25.0, bloomFactor * 4 ,2048 );
-
+var effectBloom = new THREE.BloomPass( bloomStrength,bloomFactor * 25.0, bloomFactor * 4 ,1024 );
+// effectBloom.renderToScreen = true;
 composer.addPass( effectBloom );
 
 
@@ -37,21 +56,7 @@ composer.addPass( effectBloom );
 var effectCopy = new THREE.ShaderPass( THREE.CopyShader );
 effectCopy.renderToScreen = true;
 composer.addPass( effectCopy );
-////////////////////
-///// FXAA
-////////////////////
 
-dpr = 1;
-// if (window.devicePixelRatio !== undefined) {
-//   dpr = window.devicePixelRatio;
-//   console.log(dpr);
-// }
-
-effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
-effectFXAA.uniforms['resolution'].value.set(1 / (window.innerWidth * dpr), 1 / (window.innerHeight * dpr));
-effectFXAA.renderToScreen = true;
-composer.addPass(renderModel);
-composer.addPass(effectFXAA);
 
 
 
@@ -160,10 +165,7 @@ sound.panner.connect(mainVolume);
 
 
 
-var sunLight = new THREE.PointLight(0xffffff,1.5);
-sunLight.position.set(0,0,0);
 
-scene.add(sunLight);
 
 
 var sunGeo = new THREE.SphereGeometry(3,30,30);
@@ -182,6 +184,7 @@ mercury.setTexture(new THREE.ImageUtils.loadTexture("maps/mercury.jpg"));
 // mercury.setOrbitRadius(10);
 mercury.setOrbitSpeed(50.55 * speedMult)
 planetsArray[0] = mercury;
+
 
 var venus = new planet(scene,0.8,15);
 venus.setTexture(new THREE.ImageUtils.loadTexture("maps/venus.jpg"));
@@ -232,38 +235,20 @@ planetsArray[7] = uranus;
 
 
 
-//// planets spot lights for shadow mapping
-
-// var spotLightsArray = [];
-// for(var i=0; i < planetsArray.length; i++){
-
-// 	spotLightsArray[i] = new THREE.SpotLight(0xffffff,0,100,myDegToRad(30),1);
-// 	//var mercurySpotLight= new THREE.SpotLight(0xffffff,2,100,myDegToRad(30),1);
-// 	// spotLightsArray[i].position.set(0,0,0);
-// 	// spotLightsArray[i].castShadow = true;
-// 	// spotLightsArray[i].onlyShadow = true;   //// <------------ only shadows
-// 	// spotLightsArray[i].shadowBias = -0.0005
-// 	// spotLightsArray[i].shadowMapWidth = 1024;
-// 	// spotLightsArray[i].shadowMapHeight = 1024;
-// 	// spotLightsArray[i].shadowDarkness = 0.5;
-// 	// spotLightsArray[i].shadowCameraNear = 1;
-// 	// spotLightsArray[i].shadowCameraFar = 500;
-// 	// spotLightsArray[i].shadowCameraFov =30;
-// 	// spotLightsArray[i].shadowCameraVisible = true;
-// 	scene.add(spotLightsArray[i]);
-// 	scene.add(spotLightsArray[i].target);
-// }
 
 
-var ambientLight = new THREE.AmbientLight( 0x111111 );
+var sunLight = new THREE.PointLight(0xffffff,1.5);
+sunLight.position.set(0,0,0);
+
+scene.add(sunLight);
+
+var ambientLight = new THREE.AmbientLight( 0x333333 );
 scene.add(ambientLight);
 
-///////////////////
-/////////// END planets spotlights
-/////////////////////////:
+
 
 ///////////////
-//// fixed spots TEST
+//// static spots TEST
 ///////////////
 
 
@@ -274,19 +259,16 @@ scene.add(ambientLight);
 		fSpot[i].position.set(0,0,0);
 		fSpot[i].castShadow = true;
 		fSpot[i].onlyShadow = true;   //// <------------ only shadows
-		fSpot[i].shadowBias = -0.0005
+		fSpot[i].shadowBias = 0.0001;
 		fSpot[i].shadowMapWidth = 2048;
 		fSpot[i].shadowMapHeight = 2048;
 		fSpot[i].shadowDarkness = 0.8;
 		fSpot[i].shadowCameraNear = 1;
-		fSpot[i].shadowCameraFar = 500;
+		fSpot[i].shadowCameraFar = 200;
 		fSpot[i].shadowCameraFov =60;
 		// fSpot[i].shadowCameraVisible = true;
 
 
-	/*	var helper = new THREE.SpotLightHelper(fSpot,2);
-		scene.add(helper);	*/
-		//fSpot.target = tar;
 		scene.add(fSpot[i]);
 		scene.add(fSpot[i].target);	 	
 
@@ -301,23 +283,22 @@ scene.add(ambientLight);
 
 
 
-	//tar.position.set(-20,0,0);
+
 
 
 
 
 ///////////////
-//// END fixed spots TEST
+//// END static spots TEST
 ///////////////
 
 
+ // renderer.shadowMapCullFace = THREE.CullFaceBack;
 
-// renderer.shadowMapCullFace = THREE.CullFaceFront;
-// earthSpotLight.shadowCascadeCount = 3;
-// renderer.shadowMapCascade = true;
 
-camera.position.y = 20;
-camera.position.z = 20;
+camera.position.x = 6;
+camera.position.y = 12;
+camera.position.z = 39;
 
 
  //// night shader test --- interessant mais ca marche pas encore... 
@@ -354,14 +335,12 @@ camera.position.z = 20;
 var once = 0;
 function animate(t){
 
-		// for(var i=0; i<spotLightsArray.length; i++){
-		// 	spotLightsArray[i].target.position.set(planetsArray[i].planet.position.x , planetsArray[i].planet.position.y , planetsArray[i].planet.position.z);
-		// }
 
+		// console.log(camera.position);
 		var dt = sceneClock.getDelta();
 
 		controls.update(dt);
-		//camera.lookAt(new THREE.Vector3( 0, 0, 0 ));
+
 		var mult = 1;
 
 		var p = new THREE.Vector3();
@@ -420,18 +399,18 @@ function animate(t){
 
 		sound.panner.setPosition(q.x * mult, q.y* mult, q.z* mult);
 		sound.panner.setVelocity(dx/dt, dy/dt, dz/dt);		
+
+
+		/////////////////////
+		/////////  RENDER
+		//////////////////:
 		
 		window.requestAnimationFrame(animate);	
-		// renderer.setClearColor( 0x000000);
+
 		renderer.clear();
 
-	    // renderer.render(scene, camera);
+	    //renderer.render(scene, camera);
 	    renderer.autoClear = false;
-
-
-	    
-	    	
-
 	    composer.render();
 }
 
