@@ -1,6 +1,6 @@
  
 
-function planet(_sceneObject,radius, _orbitRadius){
+function planet(_sceneObject,radius, _orbitRadius, _name){
 	
 
 	// this.orbitRadius = _orbitRadius;
@@ -12,7 +12,8 @@ function planet(_sceneObject,radius, _orbitRadius){
 	var moonsPivots = [];
 	var moonMesh;
 	this.radius = radius;
-	// this.scene = new THREE.Scene();
+	this.name = _name;
+	
 	this.scene = _sceneObject;
 	this.texture = new THREE.ImageUtils.loadTexture("maps/earth.jpg");
 	this.orbitRadius =_orbitRadius;
@@ -97,39 +98,37 @@ function planet(_sceneObject,radius, _orbitRadius){
 	this.drawOrbit = function()
 	{
 
-	var points = [];
-	var nPoints = 50;
-	for (var i = 0; i < nPoints; i++) {
-		  points[i] = new THREE.Vector3(
-		  		Math.sin(myDegToRad(360/nPoints)*i) * this.orbitRadius,
-		  		 0,
-		  		Math.cos(myDegToRad(360/nPoints)*i) * this.orbitRadius
-		  );
-		// points[i] = new THREE.Vector3(nPoints,i*100,i*5);
-	}
-	//Create a closed loop
-	var curve = new THREE.ClosedSplineCurve3();
+		var points = [];
+		var nPoints = 50;
+		for (var i = 0; i < nPoints; i++) {
+			  points[i] = new THREE.Vector3(
+			  	Math.sin(myDegToRad(360/nPoints)*i) * this.orbitRadius,
+			  	0,
+			  	Math.cos(myDegToRad(360/nPoints)*i) * this.orbitRadius
+			  );
+			
+		}
+		//Create a closed loop
+		var curve = new THREE.ClosedSplineCurve3();
 
-	for (var i = 0; i < points.length; i++) {
-		curve.points.push(points[i]);
-	};
+		for (var i = 0; i < points.length; i++) {
+			curve.points.push(points[i]);
+		};
 
-	
+		
 
-	var geometry = new THREE.Geometry();
-	geometry.vertices = curve.getPoints(120);
+		var geometry = new THREE.Geometry();
+		geometry.vertices = curve.getPoints(120);
 
-	var material = new THREE.LineBasicMaterial( { color: 0xaaddff, linewidth: 1} );
+		var material = new THREE.LineBasicMaterial( { color: 0xaaddff, linewidth: 1} );
 
-	    var mesh = new THREE.Line(geometry,material);
-    
-    this.scene.add(mesh);		
-	// 	var orbitMaterial = new THREE.MeshBasicMaterial( { wireframe : false,color: 0xffff00, side: THREE.DoubleSide, map: new THREE.ImageUtils.loadTexture('maps/sun.jpg')} );
-	// 	this.orbitObject = new THREE.Mesh(new THREE.RingGeometry(this.orbitRadius-0.1,this.orbitRadius+0.1,128,3),orbitMaterial);
-	// 	this.orbitObject.rotation.x = myDegToRad(-90);
-	// 	this.scene.add(this.orbitObject);
+		    var mesh = new THREE.Line(geometry,material);
+	    
+	    this.scene.add(mesh);	
 
 	}
+
+
 	this.initGeometry = function(){
 
 
