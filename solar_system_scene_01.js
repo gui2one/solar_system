@@ -1,7 +1,9 @@
 
 
-
-
+var item, loaded, total;
+THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
+    console.log( item, loaded, total );
+};
 
 
 if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
@@ -466,13 +468,18 @@ function animate(t){
 		/////////  RENDER
 		//////////////////:
 		
-		window.requestAnimationFrame(animate);	
+		if(loaded == total){
+			window.requestAnimationFrame(animate);	
 
-		renderer.clear();
+			renderer.clear();
 
-	    //renderer.render(scene, camera);
-	    renderer.autoClear = false;
-	    composer.render();
+		    //renderer.render(scene, camera);
+		    renderer.autoClear = false;
+	    	composer.render();
+
+		}
+
+
 
 
 
