@@ -12,6 +12,7 @@ var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 10000 );
 
 var autoCamera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 10000 );
+var earthCamera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 10000 );
 
 var activeCamera = camera;
 
@@ -381,6 +382,7 @@ function animate(t){
 
 		if(loaded == total){
 
+
 				var dt = sceneClock.getDelta();
 
 				if(useControls) controls.update(dt);
@@ -397,6 +399,13 @@ function animate(t){
 					planetsArray[i].update();
 
 				};
+
+				earthCamera.matrix.identity();
+				earthCamera.applyMatrix(planetsArray[2].planet.matrix);
+				earthCamera.position.x += 5;
+				earthCamera.position.y += 5;
+				// console.log(planetsArray[2].planet.position);
+				earthCamera.lookAt(planetsArray[2].planet.position);				
 
 
 
@@ -479,8 +488,11 @@ function animate(t){
 				/////////  RENDER
 				//////////////////:
 				
+					setTimeout( function() {
+
+        				window.requestAnimationFrame(animate);	
+    				}, 1000 / 30 );
 					
-					window.requestAnimationFrame(animate);	
 
 					renderer.clear();
 
@@ -552,16 +564,16 @@ gui.add( uiConfig, 'param1').onChange( function() {
 
 		if(activeCamera == camera){
 
-			activeCamera  = autoCamera;
-			autoCamera.matrix.identity();
-			autoCamera.applyMatrix(camera.matrix);
+			activeCamera  = earthCamera;
+/*			autoCamera.matrix.identity();
+			autoCamera.applyMatrix(camera.matrix);*/
 
 			
 			controls.activeLook = false;
 
 			
 			
-			console.log(autoCamera.rotation);
+			console.log(earthCamera.position);
 		}else{
 			
 			//autoCamera.applyMatrix(camera.matrixWorld);			
@@ -569,6 +581,15 @@ gui.add( uiConfig, 'param1').onChange( function() {
 			controls.activeLook = true;
 		}		
 		renderModel.camera = activeCamera;
+  	effectFXAA.uniforms['resolution'].value.set(1 / (window.innerWidth * dpr), 1 / (window.innerHeight * dpr));
+  	composer.setSize(window.innerWidth * dpr, window.innerHeight * dpr);
+
+  	controls.viewHalfX = window.innerWidth / 2;
+  	controls.viewHalfY = window.innerHeight / 2;
+	activeCamera.aspect = window.innerWidth / window.innerHeight;
+	activeCamera.updateProjectionMatrix();
+
+	renderer.setSize( window.innerWidth, window.innerHeight );		
 		
 
 
