@@ -66,7 +66,12 @@ effectCopy.renderToScreen = true;
 composer.addPass( effectCopy );
 
 
+var uiConfig = {
 
+	param1:false,
+	camera:0
+
+};
 
 
 
@@ -78,13 +83,13 @@ var gui = new dat.GUI({
 	width : 300
 });
 
+
+
 var useControls = true;
+// var camChosser = gui.add({cam1:"cam1"});
 
-var uiConfig = {
 
-	param1:false
-
-};
+var camChooser = gui.add(uiConfig,'camera',{'Mercury':0, 'Venus':1, 'Earth':2, 'Mars':3, 'Jupiter':4, 'Saturn':5, 'Neptune':6, 'Uranus':7}).name('Camera');
 
 
 
@@ -191,62 +196,66 @@ var speedMult = 0.3;
 var planetsArray = [];
 
 
-var mercury = new planet(scene,1,10, "mercury");
+var mercury = new planet(scene,1,10, "Mercury");
 mercury.setTexture(new THREE.ImageUtils.loadTexture("maps/mercury.jpg"));
 // mercury.setOrbitRadius(10);
 mercury.setOrbitSpeed(50.55 * speedMult)
 planetsArray[0] = mercury;
 
 
-var venus = new planet(scene,0.8,15, "venus");
+var venus = new planet(scene,0.8,15, "Venus");
 venus.setTexture(new THREE.ImageUtils.loadTexture("maps/venus.jpg"));
 // venus.setOrbitRadius(15);
 venus.setOrbitSpeed(32.5 * speedMult)
 planetsArray[1] = venus;
 
-var earth = new planet(scene,2,25, "earth");
+var earth = new planet(scene,2,25, "Earth");
 earth.setTexture(new THREE.ImageUtils.loadTexture("maps/earth.jpg"));
 // earth.setOrbitRadius(25);
 earth.setOrbitSpeed(45.8 * speedMult)
 earth.doMoon(1);
 planetsArray[2] = earth;
 
-var mars = new planet(scene,1.2,40, "mars");
+var mars = new planet(scene,1.2,40, "Mars");
 mars.setTexture(new THREE.ImageUtils.loadTexture("maps/mars.jpg"));
 // mars.setOrbitRadius(40);
 mars.setOrbitSpeed(39.9 * speedMult);
 mars.doMoon(2)
 planetsArray[3] = mars;
 
-var jupiter = new planet(scene,4,60, "jupiter");
+var jupiter = new planet(scene,4,60, "Jupiter");
 jupiter.setTexture(new THREE.ImageUtils.loadTexture("maps/jupiter.jpg"));
 // jupiter.setOrbitRadius(60);
 jupiter.setOrbitSpeed(50.1 * speedMult);
 jupiter.doMoon(2)
 planetsArray[4] = jupiter;
 
-var saturn = new planet(scene,3,80, "saturn");
+var saturn = new planet(scene,3,80, "Saturn");
 saturn.setTexture(new THREE.ImageUtils.loadTexture("maps/saturn.jpg"));
 // saturn.setOrbitRadius(80);
 saturn.setOrbitSpeed(49.2 * speedMult);
 saturn.doRing();
 planetsArray[5] = saturn;
 
-var neptune = new planet(scene,2,100, "neptune");
+var neptune = new planet(scene,2,100, "Neptune");
 neptune.setTexture(new THREE.ImageUtils.loadTexture("maps/neptune.jpg"));
 // saturn.setOrbitRadius(80);
 neptune.setOrbitSpeed(22.2 * speedMult);
 planetsArray[6] = neptune;
 
-var uranus = new planet(scene,1.5,250, "uranus");
+var uranus = new planet(scene,1.5,250, "Uranus");
 uranus.setTexture(new THREE.ImageUtils.loadTexture("maps/uranus.jpg"));
 // saturn.setOrbitRadius(80);
 uranus.setOrbitSpeed(21.2 * speedMult);
 uranus.planet.castShadow = false;
 planetsArray[7] = uranus;
 
-
-
+var planetsCam = [];
+for (var i = 0; i < planetsArray.length; i++) {
+	planetsCam[i] = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 10000 );
+	planetsCam[i].name = planetsArray[i].name;
+	// console.log(planetsCam[i].name + "*****************");
+};
 
 
 
@@ -398,14 +407,17 @@ function animate(t){
 				for (var i = planetsArray.length - 1; i >= 0; i--) {
 					planetsArray[i].update();
 
+					planetsCam[i].matrix.identity();
+					planetsCam[i].applyMatrix(planetsArray[i].planet.matrix);
+					planetsCam[i].position.x += planetsArray[i].radius*2.8;
+					planetsCam[i].position.y += planetsArray[i].radius*1.2;
+					// console.log(planetsArray[2].planet.position);
+					planetsCam[i].lookAt(planetsArray[i].planet.position);							
+
+
 				};
 
-				earthCamera.matrix.identity();
-				earthCamera.applyMatrix(planetsArray[2].planet.matrix);
-				earthCamera.position.x += 5;
-				earthCamera.position.y += 5;
-				// console.log(planetsArray[2].planet.position);
-				earthCamera.lookAt(planetsArray[2].planet.position);				
+		
 
 
 
@@ -593,6 +605,24 @@ gui.add( uiConfig, 'param1').onChange( function() {
 		
 
 
+});
+
+camChooser.onChange( function(index){
+
+	console.log(index);
+	activeCamera = planetsCam[index];
+	console.log(planetsCam[index]);
+
+		renderModel.camera = activeCamera;
+  	effectFXAA.uniforms['resolution'].value.set(1 / (window.innerWidth * dpr), 1 / (window.innerHeight * dpr));
+  	composer.setSize(window.innerWidth * dpr, window.innerHeight * dpr);
+
+  	controls.viewHalfX = window.innerWidth / 2;
+  	controls.viewHalfY = window.innerHeight / 2;
+	activeCamera.aspect = window.innerWidth / window.innerHeight;
+	activeCamera.updateProjectionMatrix();
+
+	renderer.setSize( window.innerWidth, window.innerHeight );		
 });
 
 
