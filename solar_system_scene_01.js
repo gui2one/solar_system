@@ -11,6 +11,9 @@ if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 10000 );
 
+var autoCamera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 10000 );
+
+var activeCamera = camera;
 
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -23,7 +26,9 @@ renderer.shadowMapType = THREE.PCFSoftShadowMap;
 ////////////////////
 
 var composer = new THREE.EffectComposer( renderer );
-var renderModel = new THREE.RenderPass(scene,camera);
+var renderModel = new THREE.RenderPass(scene,activeCamera);
+
+console.log(renderModel);
 
 
 
@@ -62,8 +67,7 @@ composer.addPass( effectCopy );
 
 
 
-var controls = new THREE.FirstPersonControls(camera, renderer.domElement);
-controls.movementSpeed = 10.0;
+
 
 // var controls = new THREE.FirstPersonControls(camera);
 var sceneClock = new THREE.Clock({autoStrart: true});
@@ -73,16 +77,15 @@ var gui = new dat.GUI({
 	width : 300
 });
 
+var useControls = true;
+
 var uiConfig = {
 
-	param1:true
+	param1:false
 
 };
 
-gui.add( uiConfig, 'param1').onChange( function() {
 
-		console.log("changed param1");
-});
 
 gui.open();
 
@@ -311,9 +314,17 @@ scene.add(ambientLight);
  // renderer.shadowMapCullFace = THREE.CullFaceBack;
 
 
+
+var controls = new THREE.FirstPersonControls(camera, renderer.domElement);
+controls.movementSpeed = 10.0;
+
+controls.object.position.set(6,30,60);
+controls.target = new THREE.Vector3( 0, 0, 0 );
+controls.activeLook =  true;
 camera.position.x = 6;
-camera.position.y = 12;
-camera.position.z = 39;
+camera.position.y = 30;
+camera.position.z = 60;
+
 
 
  //// night shader test --- interessant mais ca marche pas encore... 
@@ -368,114 +379,114 @@ camera.position.z = 39;
 var once = 0;
 function animate(t){
 
-
-
-		var dt = sceneClock.getDelta();
-
-		controls.update(dt);
-
-		var mult = 1;
-
-		var p = new THREE.Vector3();
-
-		p.setFromMatrixPosition(earth.moons[0].matrixWorld);
-		var px = p.x, py = p.y, pz = p.z;
-
-		// /////
-		for (var i = planetsArray.length - 1; i >= 0; i--) {
-			planetsArray[i].update();
-
-		};
-
-
-
-
-
-
-		// /////
-
-		for (var i = 0; i < planetsArray.length; i++) {
-
-	        		
-			var divObject2 = document.getElementById("planet"+i) ;
-
-
-
-	        var tempPos = planetsArray[i].planet.position.clone();
-	        // var projector  = new THREE.Projector();
-	        var v = tempPos.project(camera);
-			divObject2.style.left = Math.clamp((v.x + 1) * (window.innerWidth/2),0, window.innerWidth-100);
-			divObject2.style.top = Math.clamp((-v.y + 1) * (window.innerHeight/2),0,window.innerHeight - 50);	        
-
-	        if(v.z >= 1.0){
-	        	divObject2.style.visibility = 'hidden';
-
-	        }else{
-
-				divObject2.style.visibility = 'visible';        	
-	        }
-	         // console.log(v.z);
-		};
-
-
-		// /////
-
-
-
-
-		
-		divObject.style.left = Math.clamp((v.x + 1) * (window.innerWidth/2),0, window.innerWidth-100);
-		divObject.style.top = Math.clamp((-v.y + 1) * (window.innerHeight/2),0,window.innerHeight - 50);
-		
-
-
-		var volumeVal = (1-Math.sqrt(Math.clamp(camera.position.distanceTo(earth.moons[0].position)/9,0,1)))*1.0;
-		mainVolume.gain.value = volumeVal;
-		// console.log(volumeVal);
-
-
-
-
-		 earth.moons[0].updateMatrixWorld();
-		 		var p = new THREE.Vector3();
-		p.setFromMatrixPosition(earth.moons[0].matrixWorld);
-
-		// And copy the position over to the sound of the object.
-		sound.panner.setPosition(p.x * mult, p.y * mult, p.z * mult);
-
-		camera.updateMatrixWorld();
-		var p = new THREE.Vector3();
-		p.setFromMatrixPosition(camera.matrixWorld);
-
-		// And copy the position over to the listener.
-		ctx.listener.setPosition(p.x * mult, p.y * mult, p.z * mult);
-
-
-
-
-
-		earth.moons[0].updateMatrixWorld();
-
-		var q = new THREE.Vector3();
-		q.setFromMatrixPosition(earth.moons[0].matrixWorld);
-		var dx = q.x-px, dy = q.y-py, dz = q.z-pz;
-
-		sound.panner.setPosition(q.x * mult, q.y* mult, q.z* mult);
-		sound.panner.setVelocity(dx/dt, dy/dt, dz/dt);		
-
-
-		/////////////////////
-		/////////  RENDER
-		//////////////////:
-		
 		if(loaded == total){
-			window.requestAnimationFrame(animate);	
 
-			renderer.clear();
+				var dt = sceneClock.getDelta();
 
-		    //renderer.render(scene, camera);
-		    renderer.autoClear = false;
-	    	composer.render();
+				if(useControls) controls.update(dt);
+
+				var mult = 1;
+
+				var p = new THREE.Vector3();
+
+				p.setFromMatrixPosition(earth.moons[0].matrixWorld);
+				var px = p.x, py = p.y, pz = p.z;
+
+				// /////
+				for (var i = planetsArray.length - 1; i >= 0; i--) {
+					planetsArray[i].update();
+
+				};
+
+
+
+
+
+
+				// /////
+
+				for (var i = 0; i < planetsArray.length; i++) {
+
+			        		
+					var divObject2 = document.getElementById("planet"+i) ;
+
+
+
+			        var tempPos = planetsArray[i].planet.position.clone();
+			        // var projector  = new THREE.Projector();
+			        var v = tempPos.project(activeCamera);
+					divObject2.style.left = Math.clamp((v.x + 1) * (window.innerWidth/2),0, window.innerWidth-100);
+					divObject2.style.top = Math.clamp((-v.y + 1) * (window.innerHeight/2),0,window.innerHeight - 50);	        
+
+			        if(v.z >= 1.0){
+			        	divObject2.style.visibility = 'hidden';
+
+			        }else{
+
+						divObject2.style.visibility = 'visible';        	
+			        }
+			         // console.log(v.z);
+				};
+
+
+				// /////
+
+
+
+
+				
+				divObject.style.left = Math.clamp((v.x + 1) * (window.innerWidth/2),0, window.innerWidth-100);
+				divObject.style.top = Math.clamp((-v.y + 1) * (window.innerHeight/2),0,window.innerHeight - 50);
+				
+
+
+				var volumeVal = (1-Math.sqrt(Math.clamp(activeCamera.position.distanceTo(earth.moons[0].position)/9,0,1)))*1.0;
+				mainVolume.gain.value = volumeVal;
+				// console.log(volumeVal);
+
+
+
+
+				 earth.moons[0].updateMatrixWorld();
+				 		var p = new THREE.Vector3();
+				p.setFromMatrixPosition(earth.moons[0].matrixWorld);
+
+				// And copy the position over to the sound of the object.
+				sound.panner.setPosition(p.x * mult, p.y * mult, p.z * mult);
+
+				activeCamera.updateMatrixWorld();
+				var p = new THREE.Vector3();
+				p.setFromMatrixPosition(activeCamera.matrixWorld);
+
+				// And copy the position over to the listener.
+				ctx.listener.setPosition(p.x * mult, p.y * mult, p.z * mult);
+
+
+
+
+
+				earth.moons[0].updateMatrixWorld();
+
+				var q = new THREE.Vector3();
+				q.setFromMatrixPosition(earth.moons[0].matrixWorld);
+				var dx = q.x-px, dy = q.y-py, dz = q.z-pz;
+
+				sound.panner.setPosition(q.x * mult, q.y* mult, q.z* mult);
+				sound.panner.setVelocity(dx/dt, dy/dt, dz/dt);		
+
+
+				/////////////////////
+				/////////  RENDER
+				//////////////////:
+				
+					
+					window.requestAnimationFrame(animate);	
+
+					renderer.clear();
+
+				    //renderer.render(scene, activeCamera);
+				    renderer.autoClear = false;
+			    	composer.render();
 
 		}
 
@@ -507,18 +518,61 @@ window.addEventListener( 'resize', onWindowResize, false );
 
 function onWindowResize() {
 
-  effectFXAA.uniforms['resolution'].value.set(1 / (window.innerWidth * dpr), 1 / (window.innerHeight * dpr));
-  composer.setSize(window.innerWidth * dpr, window.innerHeight * dpr);
+  	effectFXAA.uniforms['resolution'].value.set(1 / (window.innerWidth * dpr), 1 / (window.innerHeight * dpr));
+  	composer.setSize(window.innerWidth * dpr, window.innerHeight * dpr);
 
-  controls.viewHalfX = window.innerWidth / 2;
-  controls.viewHalfY = window.innerHeight / 2;
-	camera.aspect = window.innerWidth / window.innerHeight;
-	camera.updateProjectionMatrix();
+  	controls.viewHalfX = window.innerWidth / 2;
+  	controls.viewHalfY = window.innerHeight / 2;
+	activeCamera.aspect = window.innerWidth / window.innerHeight;
+	activeCamera.updateProjectionMatrix();
 
 	renderer.setSize( window.innerWidth, window.innerHeight );
 
+
+
 }
 
+// window.addEventListener( 'mousedown', onMouseDown, true );
+// window.addEventListener( 'mouseup', onMouseUp, true );
+
+function onMouseDown(event){
+
+	controls.activeLook = true;
+	event.preventDefault();
+	console.log("mouseDown");
+}
+
+function onMouseUp(){
+
+	controls.activeLook = false;
+	console.log("mouseUp");
+}
+
+gui.add( uiConfig, 'param1').onChange( function() {
+
+		if(activeCamera == camera){
+
+			activeCamera  = autoCamera;
+			autoCamera.matrix.identity();
+			autoCamera.applyMatrix(camera.matrix);
+
+			
+			controls.activeLook = false;
+
+			
+			
+			console.log(autoCamera.rotation);
+		}else{
+			
+			//autoCamera.applyMatrix(camera.matrixWorld);			
+			activeCamera = camera;
+			controls.activeLook = true;
+		}		
+		renderModel.camera = activeCamera;
+		
+
+
+});
 
 
 

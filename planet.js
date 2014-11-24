@@ -54,8 +54,8 @@ function planet(_sceneObject,radius, _orbitRadius, _name){
 
 		this.bDoRing = true;
 
-		var ringGeo = new THREE.RingGeometry( this.radius*1.1, this.radius*1.3, 32 );
-		var ringMaterial = new THREE.MeshLambertMaterial( { color: 0xffff00, side: THREE.DoubleSide, map: new THREE.ImageUtils.loadTexture('maps/sun.jpg')} );
+		var ringGeo = new THREE.RingGeometry( this.radius*1.1, this.radius*1.7, 32 );
+		var ringMaterial = new THREE.MeshLambertMaterial( { color: 0xffffff, side: THREE.DoubleSide, map: new THREE.ImageUtils.loadTexture('maps/rings.jpg')} );
 		var ringMesh = new THREE.Mesh( ringGeo, ringMaterial );
 		this.ring = ringMesh;	
 		this.scene.add( this.ring );   
